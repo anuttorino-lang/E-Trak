@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <title>ระบบบริหารและติดตามโครงการก่อสร้าง | Executive Construction Tracking System</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+        background:
+          radial-gradient(circle at 50% 8%, rgba(255, 255, 255, 0.82), transparent 28%),
+          linear-gradient(145deg, #dbeafe 0%, #bfdbfe 48%, #d8eaff 100%);
+        color: #1f2937;
+        display: grid;
+        place-items: center;
+      }
+
+      .login {
+        width: min(420px, calc(100vw - 32px));
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 24px;
+        box-sizing: border-box;
+        box-shadow: 0 18px 42px rgba(30, 64, 175, 0.16);
+      }
+
+      .brandLogin {
+        display: grid;
+        justify-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+        text-align: center;
+      }
+
+      .systemLogo {
+        width: 166px;
+        height: 166px;
+        object-fit: contain;
+        box-sizing: border-box;
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        filter: drop-shadow(0 10px 13px rgba(15, 23, 42, 0.2));
+      }
+
+      .systemNameTh {
+        margin: 0;
+        color: #0f172a;
+        font-size: 19px;
+        font-weight: 900;
+        line-height: 1.35;
+      }
+
+      .systemNameEn {
+        margin: 2px 0 0;
+        color: #2563eb;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        margin: 0 0 6px;
+        font-size: 22px;
+      }
+
+      .muted {
+        margin: 0 0 18px;
+        color: #64748b;
+        font-size: 13px;
+      }
+
+      label {
+        display: block;
+        margin: 12px 0 6px;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .quickUsers {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin: 14px 0 6px;
+      }
+
+      .quickUser {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #1f2937;
+        text-align: left;
+      }
+
+      .unitIcon {
+        display: inline-grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        flex: 0 0 32px;
+        border-radius: 8px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      input,
+      button,
+      a {
+        width: 100%;
+        box-sizing: border-box;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+
+      input {
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+      }
+
+      button {
+        margin-top: 16px;
+        padding: 11px 16px;
+        border: 0;
+        background: #2563eb;
+        color: #ffffff;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      a {
+        display: block;
+        margin-top: 10px;
+        padding: 10px;
+        text-align: center;
+        color: #1f2937;
+        border: 1px solid #cbd5e1;
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      .message {
+        margin-top: 14px;
+        font-weight: 700;
+      }
+
+      .error {
+        color: #b91c1c;
+      }
+
+      .supportNote {
+        margin: 14px 0 0;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      @media (max-width: 520px) {
+        .systemLogo {
+          width: 148px;
+          height: 148px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="login">
+      <div class="brandLogin">
+        <img class="systemLogo" src="https://drive.google.com/thumbnail?id=1RpbWHAXf8aGYY1EifKsD3oHc8NLWDANW&sz=w320" alt="Executive Construction Tracking System logo">
+        <div>
+          <h1 class="systemNameTh">ระบบบริหารและติดตามโครงการก่อสร้าง</h1>
+          <div class="systemNameEn">Executive Construction Tracking System</div>
+        </div>
+      </div>
+      <p class="muted">เข้าสู่ระบบแอดมินสำหรับ 3 งาน</p>
+
+      <div class="quickUsers">
+        <button class="quickUser" type="button" data-username="building"><span class="unitIcon" aria-hidden="true">🏗️</span><span>งานอาคารสถานที่</span></button>
+        <button class="quickUser" type="button" data-username="plan"><span class="unitIcon" aria-hidden="true">📋</span><span>งานนโยบายและแผน</span></button>
+        <button class="quickUser" type="button" data-username="procurement"><span class="unitIcon" aria-hidden="true">🚚</span><span>งานพัสดุและยานพาหนะ</span></button>
+      </div>
+
+      <form id="loginForm">
+        <label>ชื่อผู้ใช้</label>
+        <input id="username" name="username" autocomplete="username" required>
+
+        <label>รหัสผ่าน</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+        <button id="submitButton" type="submit">เข้าสู่ระบบ</button>
+      </form>
+
+      <a href="<?= webAppUrl ?>?page=dashboard" target="_top">กลับ Dashboard</a>
+      <div id="message" class="message"></div>
+      <p class="supportNote">แจ้งปัญหาระบบ โทร.36776</p>
+    </main>
+
+    <script>
+      const WEB_APP_URL = '<?= webAppUrl ?>';
+      const loginForm = document.getElementById('loginForm');
+      const username = document.getElementById('username');
+      const password = document.getElementById('password');
+      const submitButton = document.getElementById('submitButton');
+      const message = document.getElementById('message');
+
+      function setMessage(text, type) {
+        message.textContent = text || '';
+        message.className = type ? 'message ' + type : 'message';
+      }
+
+      function buildUrl(page, params) {
+        const url = new URL(WEB_APP_URL);
+        url.searchParams.set('page', page);
+        Object.keys(params || {}).forEach(function(key) {
+          if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+            url.searchParams.set(key, params[key]);
+          }
+        });
+        return url.toString();
+      }
+
+      loginForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        submitButton.disabled = true;
+        setMessage('กำลังเข้าสู่ระบบ...', '');
+
+        const payload = Object.fromEntries(new FormData(loginForm).entries());
+        google.script.run
+          .withSuccessHandler(function(result) {
+            localStorage.setItem('adminAuthToken', result.token);
+            localStorage.setItem('adminUser', JSON.stringify(result.user));
+            window.top.location.replace(buildUrl('admin', { token: result.token }));
+          })
+          .withFailureHandler(function(error) {
+            setMessage(error.message, 'error');
+            submitButton.disabled = false;
+          })
+          .loginAdmin(payload);
+      });
+
+      document.querySelectorAll('.quickUser').forEach(function(button) {
+        button.addEventListener('click', function() {
+          username.value = button.dataset.username;
+          password.value = '1234';
+          password.focus();
+          setMessage('', '');
+        });
+      });
+    </script>
+  </body>
+</html>

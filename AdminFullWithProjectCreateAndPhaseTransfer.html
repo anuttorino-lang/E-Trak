@@ -1,0 +1,2447 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>ระบบบริหารและติดตามโครงการก่อสร้าง | Executive Construction Tracking System</title>
+    <style>
+      :root {
+        --bg: #eef4f6;
+        --panel: #ffffff;
+        --line: #dfe5ec;
+        --line-soft: #edf1f5;
+        --text: #172033;
+        --muted: #64748b;
+        --blue: #1d4ed8;
+        --blue-soft: #eff6ff;
+        --green: #0f766e;
+        --red: #b91c1c;
+        --shadow: 0 12px 28px rgba(15, 23, 42, 0.09);
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background:
+          linear-gradient(180deg, #dbeafe 0, #eef4f6 220px),
+          var(--bg);
+        color: var(--text);
+      }
+
+      .app {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 22px;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+        padding: 10px 14px;
+        background: linear-gradient(135deg, #075f6c, #1d4ed8);
+        border: 1px solid rgba(255, 255, 255, 0.32);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        color: #ffffff;
+      }
+
+      .toolbarActions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .toolbarActions .userBadge,
+      .toolbarActions #userBadge {
+        display: none !important;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.2;
+      }
+
+      .brandTitle {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        min-width: 0;
+      }
+
+      .systemLogo {
+        width: 74px;
+        height: 74px;
+        flex: 0 0 74px;
+        object-fit: contain;
+        box-sizing: border-box;
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        filter: drop-shadow(0 8px 10px rgba(15, 23, 42, 0.22));
+      }
+
+      .adminUnitTitle {
+        margin-top: 3px;
+        color: rgba(255, 255, 255, 0.88);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .subtitle {
+        margin-top: 3px;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 12px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 14px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.84);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+      }
+
+      .tab {
+        flex: 1;
+        background: #ffffff;
+        color: var(--text);
+        border: 1px solid var(--line);
+        border-left-width: 5px;
+        text-align: left;
+      }
+
+      #createTab {
+        border-left-color: #2563eb;
+        background: linear-gradient(180deg, #eff6ff, #ffffff);
+      }
+
+      #transferTab {
+        border-left-color: #0f766e;
+        background: linear-gradient(180deg, #ecfdf5, #ffffff);
+      }
+
+      .tab.active {
+        background: #ffffff;
+        border-color: var(--blue);
+        color: var(--blue);
+        box-shadow: 0 5px 14px rgba(29, 78, 216, 0.13);
+      }
+
+      #transferTab.active {
+        border-color: #0f766e;
+        color: #0f766e;
+        box-shadow: 0 5px 14px rgba(15, 118, 110, 0.13);
+      }
+
+      .panel {
+        display: none;
+        background: #f6f9fd;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+      }
+
+      .panel.active {
+        display: block;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .grid > div {
+        padding: 10px;
+        border: 1px solid #e5edf6;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .full {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 700;
+        font-size: 12px;
+        color: #334155;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 11px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 14px;
+        background: #ffffff;
+        transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: 0;
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.14);
+      }
+
+      input[readonly],
+      select:disabled {
+        background: #f8fafc;
+      }
+
+      textarea {
+        min-height: 88px;
+        resize: vertical;
+      }
+
+      button {
+        border: 0;
+        border-radius: 6px;
+        padding: 11px 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+      }
+
+      button:hover,
+      .navLink:hover {
+        filter: brightness(0.97);
+        transform: translateY(-1px);
+      }
+
+      .navLink {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        box-sizing: border-box;
+        border-radius: 6px;
+        padding: 9px 13px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .primary {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: #ffffff;
+        box-shadow: 0 8px 18px rgba(29, 78, 216, 0.22);
+      }
+
+      .secondary {
+        background: #e2e8f0;
+        color: #1f2937;
+      }
+
+      .outline {
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.42);
+        color: #ffffff;
+      }
+
+      .danger {
+        background: rgba(254, 226, 226, 0.95);
+        color: var(--red);
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      form > button {
+        margin-top: 16px;
+        margin-right: 8px;
+      }
+
+      .summary,
+      .preview {
+        margin: 0 0 16px;
+        padding: 13px;
+        border-radius: 6px;
+        display: none;
+      }
+
+      .summary {
+        border: 1px solid #cbd5e1;
+        background: #f8fafc;
+      }
+
+      .projectSummaryCard {
+        display: grid;
+        gap: 8px;
+      }
+
+      .projectSummaryTitle {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(220px, 0.72fr);
+        gap: 10px;
+        padding: 9px 12px;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #eff6ff, #ffffff);
+      }
+
+      .projectSummaryTitleItem {
+        min-width: 0;
+        padding: 8px 10px;
+        border: 1px solid #dbe7f7;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .projectSummaryLabel {
+        margin-bottom: 3px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .projectSummaryName {
+        color: #0f172a;
+        font-size: 15px;
+        font-weight: 900;
+        line-height: 1.35;
+      }
+
+      .projectSummaryGrid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .projectSummaryItem {
+        min-height: 48px;
+        padding: 8px 10px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .projectSummaryValue {
+        color: #0f172a;
+        font-size: 13px;
+        font-weight: 850;
+        line-height: 1.4;
+      }
+
+      @media (max-width: 980px) {
+        .projectSummaryTitle {
+          grid-template-columns: 1fr;
+        }
+
+        .projectSummaryGrid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 720px) {
+        .projectSummaryGrid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .adminTimeline {
+        display: none;
+        margin: 0 0 16px;
+        padding: 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .adminTimeline.isVisible {
+        display: block;
+      }
+
+      .adminTimelineTitle {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .adminTimelineTitle strong {
+        color: #0f172a;
+        font-size: 14px;
+      }
+
+      .adminTimelineTitle span {
+        color: #64748b;
+        font-size: 12px;
+      }
+
+      .adminTimelineTrack {
+        position: relative;
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        padding: 10px 2px 6px;
+      }
+
+      .adminTimelineTrack::before {
+        content: "";
+        position: absolute;
+        left: 20px;
+        right: 20px;
+        top: 28px;
+        height: 2px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #bfdbfe, #e9d5ff, #fbcfe8);
+      }
+
+      .adminTimelineNode {
+        position: relative;
+        z-index: 1;
+        flex: 0 0 206px;
+        display: grid;
+        gap: 6px;
+        align-content: start;
+        padding-top: 36px;
+        color: #334155;
+      }
+
+      .adminTimelineDot {
+        position: absolute;
+        top: 7px;
+        left: 3px;
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        border: 3px solid #ffffff;
+        background: currentColor;
+        box-shadow: 0 0 0 2px currentColor, 0 4px 10px rgba(15, 23, 42, 0.16);
+      }
+
+      .adminTimelineCard {
+        min-height: 96px;
+        padding: 10px;
+        border: 1px solid #e2e8f0;
+        border-left: 5px solid currentColor;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 3px 9px rgba(15, 23, 42, 0.05);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .adminTimelineDate {
+        margin-bottom: 5px;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .adminTimelineLine {
+        display: block;
+        margin-top: 5px;
+        color: #334155;
+        font-size: 12px;
+        font-weight: 750;
+        line-height: 1.35;
+      }
+
+      .adminTimelineLine strong {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .adminTimelinePhaseLine {
+        margin-top: 7px;
+      }
+
+      .adminTimelineCompactLine {
+        display: flex;
+        gap: 6px;
+        align-items: baseline;
+      }
+
+      .adminTimelineCard.phaseCompleted,
+      .adminTimelineCard.phaseCancelled {
+        color: #ffffff;
+      }
+
+      .adminTimelineCard.phaseCompleted .adminTimelineLine,
+      .adminTimelineCard.phaseCompleted .adminTimelineLine strong,
+      .adminTimelineCard.phaseCompleted .adminTimelineDate,
+      .adminTimelineCard.phaseCompleted .adminTimelineNote,
+      .adminTimelineCard.phaseCompleted .adminTimelineRecordedAt,
+      .adminTimelineCard.phaseCancelled .adminTimelineLine,
+      .adminTimelineCard.phaseCancelled .adminTimelineLine strong,
+      .adminTimelineCard.phaseCancelled .adminTimelineDate,
+      .adminTimelineCard.phaseCancelled .adminTimelineNote,
+      .adminTimelineCard.phaseCancelled .adminTimelineRecordedAt {
+        color: #ffffff;
+      }
+
+      .adminTimelineWi {
+        margin-top: 5px;
+        color: #0f172a;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.35;
+      }
+
+      .adminTimelineMeta {
+        margin-top: 5px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.35;
+      }
+
+      .adminTimelineNote {
+        margin-top: 4px;
+        color: #b91c1c;
+        font-size: 11px;
+        font-style: italic;
+        font-weight: 800;
+        line-height: 1.35;
+      }
+
+      .adminTimelineRecordedAt {
+        align-self: flex-end;
+        margin-top: auto;
+        padding-top: 8px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.2;
+        text-align: right;
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .adminTimelineEmpty {
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      @media (max-width: 720px) {
+        .adminTimelineTrack {
+          display: grid;
+          overflow-x: visible;
+          padding-left: 10px;
+        }
+
+        .adminTimelineTrack::before {
+          left: 25px;
+          right: auto;
+          top: 14px;
+          bottom: 14px;
+          width: 2px;
+          height: auto;
+          background: linear-gradient(180deg, #bfdbfe, #e9d5ff, #fbcfe8);
+        }
+
+        .adminTimelineNode {
+          flex-basis: auto;
+          padding-top: 0;
+          padding-left: 44px;
+        }
+
+        .adminTimelineDot {
+          top: 10px;
+          left: 5px;
+        }
+      }
+
+      .preview {
+        border: 1px solid #bfdbfe;
+        background: linear-gradient(180deg, #eff6ff, #ffffff);
+      }
+
+      .summary p,
+      .preview p {
+        margin: 5px 0;
+      }
+
+      .message {
+        margin-top: 14px;
+        font-weight: 700;
+        min-height: 20px;
+      }
+
+      .success {
+        color: #15803d;
+      }
+
+      .error {
+        color: #b91c1c;
+      }
+
+      .nextTransfer {
+        display: none;
+        margin-top: 10px;
+        background: linear-gradient(135deg, #0f766e, #0d9488);
+        color: #ffffff;
+        box-shadow: 0 8px 18px rgba(15, 118, 110, 0.2);
+      }
+
+      .completeTransfer {
+        display: none;
+        margin-top: 10px;
+        margin-left: 8px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: #ffffff;
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
+      }
+
+      .cancelTransfer {
+        display: none;
+        margin-top: 10px;
+        margin-left: 8px;
+        background: linear-gradient(135deg, #991b1b, #dc2626);
+        color: #ffffff;
+        box-shadow: 0 8px 18px rgba(185, 28, 28, 0.18);
+      }
+
+      .phaseBadge {
+        display: inline-block;
+        border-radius: 6px;
+        padding: 3px 7px;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .phase1 { background: #dbeafe; color: #1e3a8a; }
+      .phase2 { background: #bfdbfe; color: #1d4ed8; }
+      .phase3 { background: #93c5fd; color: #0f3b7a; }
+      .phase4 { background: #e9d5ff; color: #6b21a8; }
+      .phase5 { background: #fce7f3; color: #9d174d; }
+      .phase6 { background: #fbcfe8; color: #be185d; }
+      .phase7 { background: #f9a8d4; color: #831843; }
+      .phaseCancelled { background: #374151; color: #ffffff; }
+      .phaseCompleted { background: #2563eb; color: #ffffff; }
+
+      @media (max-width: 720px) {
+        .app {
+          padding: 14px;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .toolbar {
+          align-items: stretch;
+          flex-direction: column;
+          padding: 10px 12px;
+        }
+
+        .toolbarActions {
+          flex-direction: column;
+        }
+
+        .systemLogo {
+          width: 64px;
+          height: 64px;
+          flex-basis: 64px;
+        }
+      }
+
+      .considerDecisionBox {
+        display: none;
+        grid-column: 1 / -1;
+        margin-top: 4px;
+        padding: 12px;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        background: linear-gradient(180deg, #eff6ff, #ffffff);
+      }
+      .considerDecisionBox.isVisible { display: block !important; }
+      .considerDecisionTitle { color: #0f172a; font-size: 13px; font-weight: 900; margin-bottom: 8px; }
+      .considerDecisionHint { margin-bottom: 10px; color: #64748b; font-size: 12px; font-weight: 700; line-height: 1.45; }
+      .considerDecisionActions { display: flex; flex-wrap: wrap; gap: 8px; }
+      .approveDecision { background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; box-shadow: 0 8px 18px rgba(22, 163, 74, 0.22); }
+      .rejectDecision { background: linear-gradient(135deg, #92400e, #b45309); color: #ffffff; box-shadow: 0 8px 18px rgba(146, 64, 14, 0.18); }
+      .acceptHandoff {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #ffffff;
+        box-shadow: 0 8px 18px rgba(217, 119, 6, 0.2);
+      }
+      .handoffNotice {
+        margin-top: 10px;
+        padding: 10px 12px;
+        border: 1px solid #fed7aa;
+        border-radius: 10px;
+        background: #fff7ed;
+        color: #9a3412;
+        font-weight: 800;
+      }
+      .phaseBadge.phasePending,
+      .adminTimelineCard.phasePending {
+        border-color: #fed7aa;
+        background: #fff7ed;
+        color: #9a3412;
+      }
+      .adminTimelineDot.phasePending {
+        background: #f59e0b;
+      }
+      .handoffInbox {
+        display: none;
+        grid-column: 1 / -1;
+        padding: 12px;
+        border: 1px solid #fed7aa;
+        border-radius: 12px;
+        background: linear-gradient(180deg, #fff7ed, #ffffff);
+      }
+      .handoffInbox.isVisible { display: block; }
+      .handoffInboxHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .handoffInboxTitle {
+        color: #9a3412;
+        font-size: 15px;
+        font-weight: 900;
+      }
+      .handoffInboxCount {
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: #ffedd5;
+        color: #9a3412;
+        font-size: 12px;
+        font-weight: 900;
+      }
+      .handoffInboxList {
+        display: grid;
+        gap: 8px;
+      }
+      .handoffInboxItem {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #fed7aa;
+        border-radius: 10px;
+        background: #ffffff;
+      }
+      .handoffInboxName {
+        color: #111827;
+        font-weight: 900;
+      }
+      .handoffInboxMeta {
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .handoffInboxAccept {
+        padding: 8px 12px;
+        white-space: nowrap;
+      }
+      .budgetApprovalBox {
+        border-color: #fed7aa;
+        background: linear-gradient(180deg, #fff7ed, #ffffff);
+      }
+      .compactGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+      @media (max-width: 820px) {
+        .compactGrid { grid-template-columns: 1fr; }
+      }
+
+      /* Calm enterprise visual layer */
+      :root {
+        --bg: #f4f7fb;
+        --panel: #ffffff;
+        --line: #dbe3ee;
+        --line-soft: #edf2f7;
+        --text: #13213a;
+        --muted: #66758c;
+        --blue: #3478f6;
+        --blue-soft: #eef5ff;
+        --green: #0f766e;
+        --red: #b42318;
+        --shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+      }
+
+      body {
+        font-family: "Noto Sans Thai", "Segoe UI", Arial, sans-serif !important;
+        background: #f4f7fb !important;
+        color: #13213a !important;
+        letter-spacing: 0 !important;
+      }
+
+      .app {
+        max-width: 1280px !important;
+        padding: 18px 22px 30px !important;
+      }
+
+      .toolbar {
+        min-height: 64px !important;
+        margin-bottom: 14px !important;
+        padding: 10px 14px !important;
+        border: 1px solid #dbe3ee !important;
+        border-radius: 12px !important;
+        background: #ffffff !important;
+        color: #13213a !important;
+        box-shadow: var(--shadow) !important;
+      }
+
+      .toolbar h1 {
+        color: #13213a !important;
+        font-size: 21px !important;
+        font-weight: 800 !important;
+      }
+
+      .toolbar .subtitle,
+      .toolbar .adminUnitTitle {
+        color: #64748b !important;
+      }
+
+      .systemLogo {
+        width: 64px !important;
+        height: 64px !important;
+        flex-basis: 64px !important;
+        filter: none !important;
+      }
+
+      .toolbarActions {
+        gap: 8px !important;
+      }
+
+      .navLink,
+      button {
+        border-radius: 8px !important;
+        font-family: inherit !important;
+        font-weight: 700 !important;
+      }
+
+      .toolbar .outline {
+        border: 1px solid #b9c9dd !important;
+        background: #ffffff !important;
+        color: #1e3a5f !important;
+      }
+
+      .toolbar .outline:hover {
+        border-color: #7aa7f8 !important;
+        background: #f5f9ff !important;
+      }
+
+      .toolbar .danger {
+        border: 1px solid #fecaca !important;
+        background: #fff1f2 !important;
+        color: #b42318 !important;
+      }
+
+      .tabs {
+        gap: 8px !important;
+        padding: 7px !important;
+        border-color: #dbe3ee !important;
+        border-radius: 11px !important;
+        background: #ffffff !important;
+        box-shadow: var(--shadow) !important;
+      }
+
+      .tab {
+        min-height: 44px !important;
+        border-radius: 8px !important;
+        background: #f8fafc !important;
+        color: #52627a !important;
+        font-weight: 700 !important;
+      }
+
+      #createTab {
+        border-left-color: #3478f6 !important;
+      }
+
+      #transferTab {
+        border-left-color: #0f766e !important;
+      }
+
+      #createTab.active {
+        border-color: #8ab5ff !important;
+        background: #eef5ff !important;
+        color: #1d4ed8 !important;
+        box-shadow: none !important;
+      }
+
+      #transferTab.active {
+        border-color: #7cc8bd !important;
+        background: #ecfdf8 !important;
+        color: #0f766e !important;
+        box-shadow: none !important;
+      }
+
+      .panel {
+        padding: 16px !important;
+        border-color: #dbe3ee !important;
+        border-radius: 12px !important;
+        background: #ffffff !important;
+        box-shadow: var(--shadow) !important;
+      }
+
+      .grid {
+        gap: 10px !important;
+      }
+
+      .grid > div {
+        padding: 10px !important;
+        border-color: #e3eaf3 !important;
+        background: #f8fafc !important;
+      }
+
+      label {
+        color: #53637a !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+      }
+
+      input,
+      select,
+      textarea {
+        min-height: 42px !important;
+        border-color: #ccd7e5 !important;
+        border-radius: 8px !important;
+        background: #ffffff !important;
+        color: #172033 !important;
+        font-family: inherit !important;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: #3478f6 !important;
+        box-shadow: 0 0 0 3px rgba(52, 120, 246, 0.12) !important;
+      }
+
+      input[readonly],
+      select:disabled {
+        background: #eef3f8 !important;
+        color: #52627a !important;
+      }
+
+      .primary {
+        background: #3478f6 !important;
+        box-shadow: 0 6px 14px rgba(52, 120, 246, 0.2) !important;
+      }
+
+      .secondary {
+        border: 1px solid #cbd5e1 !important;
+        background: #ffffff !important;
+        color: #334155 !important;
+      }
+
+      .summary,
+      .adminTimeline {
+        border-color: #dbe3ee !important;
+        border-radius: 10px !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+      }
+
+      .projectSummaryTitle {
+        border-color: #dbe7f7 !important;
+        background: #f4f8fe !important;
+      }
+
+      .projectSummaryItem {
+        border-color: #e3eaf3 !important;
+        background: #f8fafc !important;
+      }
+
+      .adminTimelineCard {
+        border-color: #dbe3ee !important;
+        border-radius: 9px !important;
+        box-shadow: 0 2px 7px rgba(15, 23, 42, 0.045) !important;
+      }
+
+      .message {
+        font-size: 13px !important;
+      }
+
+      @media (max-width: 720px) {
+        .app {
+          padding: 10px !important;
+        }
+
+        .toolbar {
+          padding: 10px 12px !important;
+        }
+
+        .systemLogo {
+          width: 54px !important;
+          height: 54px !important;
+          flex-basis: 54px !important;
+        }
+      }
+
+      /* Keep the admin header visually aligned with the dashboard. */
+      .toolbar {
+        height: 82px !important;
+        min-height: 82px !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+        border-color: rgba(255, 255, 255, 0.24) !important;
+        background: linear-gradient(135deg, #075f6c 0%, #1d4ed8 100%) !important;
+        color: #ffffff !important;
+        box-shadow: 0 8px 22px rgba(30, 64, 175, 0.16) !important;
+      }
+
+      .toolbar h1 {
+        color: #ffffff !important;
+      }
+
+      .toolbar .subtitle,
+      .toolbar .adminUnitTitle {
+        color: rgba(255, 255, 255, 0.82) !important;
+      }
+
+      .toolbar .adminUnitTitle {
+        color: #4ade80 !important;
+        font-size: 16px !important;
+        font-weight: 900 !important;
+      }
+
+      .toolbar .systemLogo {
+        width: 92px !important;
+        height: 92px !important;
+        flex-basis: 92px !important;
+        margin: -8px 0 !important;
+        filter: drop-shadow(0 6px 9px rgba(15, 23, 42, 0.22)) !important;
+      }
+
+      .toolbar .outline {
+        border-color: rgba(255, 255, 255, 0.42) !important;
+        background: rgba(255, 255, 255, 0.13) !important;
+        color: #ffffff !important;
+      }
+
+      .toolbar .outline:hover {
+        border-color: rgba(255, 255, 255, 0.7) !important;
+        background: rgba(255, 255, 255, 0.22) !important;
+      }
+
+      /* Stronger separation between the form surface and editable fields. */
+      .panel {
+        background: #eaf1f8 !important;
+      }
+
+      .grid > div {
+        border-color: #d5e0ec !important;
+        background: #f3f7fb !important;
+      }
+
+      input,
+      select,
+      textarea {
+        border-color: #b8c7d9 !important;
+        background: #ffffff !important;
+        box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+      }
+
+      #createPanel label,
+      #createPanel input,
+      #createPanel select,
+      #createPanel textarea {
+        font-size: 15px !important;
+      }
+
+      #createPanel label {
+        margin-bottom: 8px !important;
+        font-weight: 800 !important;
+      }
+
+      #createPanel input,
+      #createPanel select {
+        min-height: 48px !important;
+      }
+
+      #createPanel form > button {
+        font-size: 15px !important;
+      }
+
+      @media (max-width: 720px) {
+        .toolbar {
+          height: auto !important;
+          min-height: 76px !important;
+          padding: 10px 12px !important;
+        }
+
+        .toolbar .systemLogo {
+          width: 76px !important;
+          height: 76px !important;
+          flex-basis: 76px !important;
+          margin: -5px 0 !important;
+        }
+      }
+
+      /* Clear, action-oriented tabs for the building admin workflow. */
+      .tabs {
+        gap: 10px !important;
+        padding: 8px !important;
+        background: #e8eef7 !important;
+      }
+
+      .tab {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 50px !important;
+        border-width: 1px !important;
+        border-left-width: 1px !important;
+        color: #ffffff !important;
+        font-size: 15px !important;
+        font-weight: 900 !important;
+        text-align: center;
+        box-shadow: 0 5px 12px rgba(15, 23, 42, 0.13) !important;
+      }
+
+      .tabIcon {
+        display: inline-grid;
+        place-items: center;
+        width: 27px;
+        height: 27px;
+        flex: 0 0 27px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        font-size: 19px;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      #createTab,
+      #createTab.active {
+        border-color: #1d4ed8 !important;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+        color: #ffffff !important;
+      }
+
+      #transferTab,
+      #transferTab.active {
+        border-color: #047857 !important;
+        background: linear-gradient(135deg, #10b981, #047857) !important;
+        color: #ffffff !important;
+      }
+
+      .tab:not(.active) {
+        opacity: 0.72;
+        filter: saturate(0.78);
+        box-shadow: 0 3px 8px rgba(15, 23, 42, 0.09) !important;
+      }
+
+      .tab.active {
+        opacity: 1;
+        filter: none;
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(29, 78, 216, 0.24) !important;
+      }
+
+      #transferTab.active {
+        box-shadow: 0 8px 18px rgba(4, 120, 87, 0.24) !important;
+      }
+
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <div class="toolbar">
+        <div class="brandTitle">
+          <img class="systemLogo" src="https://drive.google.com/thumbnail?id=1RpbWHAXf8aGYY1EifKsD3oHc8NLWDANW&sz=w320" alt="Executive Construction Tracking System logo">
+          <div>
+            <h1>ระบบบริหารและติดตามโครงการก่อสร้าง</h1>
+            <div class="subtitle">Executive Construction Tracking System</div>
+            <div id="adminTitle" class="adminUnitTitle">แอดมิน</div>
+          </div>
+        </div>
+        <div class="toolbarActions">
+          <a class="navLink outline" href="<?= webAppUrl ?>?page=dashboard" target="_top"><span aria-hidden="true">📊</span><span>Dashboard</span></a>
+          <button id="logoutButton" class="danger" type="button">ออกจากระบบ</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button id="createTab" class="tab active" type="button"><span class="tabIcon" aria-hidden="true">+</span><span>เพิ่มรายการใหม่</span></button>
+        <button id="transferTab" class="tab" type="button"><span class="tabIcon" aria-hidden="true">→</span><span>จัดการรายการ</span></button>
+      </div>
+
+      <section id="createPanel" class="panel active">
+        <form id="projectForm">
+          <div class="grid">
+            <div>
+              <label>เลขที่หนังสือ</label>
+              <input name="documentNo" required>
+            </div>
+            <div>
+              <label>วันที่รับเรื่อง</label>
+              <input id="createReceivedDate" name="receivedDate" type="date" required>
+            </div>
+            <div>
+              <label>ชื่อรายการ</label>
+              <input name="projectName" required>
+            </div>
+            <div>
+              <label>หน่วยงานเจ้าของเรื่อง / ต้นเรื่อง</label>
+              <input name="ownerUnit" required>
+            </div>
+            <div class="full">
+              <label>หมายเหตุ</label>
+              <textarea name="note"></textarea>
+            </div>
+          </div>
+
+          <button id="createSubmitButton" class="primary" type="submit">บันทึกรายการ</button>
+          <button class="secondary" type="reset">ล้างฟอร์ม</button>
+        </form>
+        <div id="createMessage" class="message"></div>
+      </section>
+
+      <section id="transferPanel" class="panel">
+        <form id="transferForm">
+          <div class="grid">
+            <div id="handoffInbox" class="handoffInbox"></div>
+
+            <div class="full">
+              <label>เลือกรายการ</label>
+              <select id="projectCode" name="projectCode" required>
+                <option value="">กำลังโหลดรายการ...</option>
+              </select>
+            </div>
+
+            <div id="projectSummary" class="summary full"></div>
+            <div id="projectTimeline" class="adminTimeline full"></div>
+
+            <div>
+              <label>SOP / Phase ใหม่</label>
+              <select id="transferPhase" name="phase" required></select>
+            </div>
+            <div>
+              <label>WI / ขั้นตอนย่อยใหม่</label>
+              <select id="transferWiStep" name="wiStep" required></select>
+            </div>
+            <div>
+              <label>วันที่รับเข้า Phase ปัจจุบัน</label>
+              <input id="transferPhaseEntryDate" readonly>
+            </div>
+            <div>
+              <label>ฝ่ายรับผิดชอบ</label>
+              <input id="transferResponsibleUnit" name="responsibleUnit" readonly>
+            </div>
+            <div id="budgetApprovalBox" class="considerDecisionBox budgetApprovalBox">
+              <div class="considerDecisionTitle">ข้อมูลอนุมัติงบประมาณ</div>
+              <div class="considerDecisionHint">กรอกเมื่อรายการอยู่ที่ Phase 4 / 3.แจ้งผลการอนุมัติ(ใบขวาง)</div>
+              <div class="grid compactGrid">
+                <div>
+                  <label>แหล่งเงิน</label>
+                  <input id="approvalBudgetSource" name="budgetSource">
+                </div>
+                <div>
+                  <label>วงเงิน</label>
+                  <input id="approvalBudgetAmount" name="budgetAmount" type="number" min="0" step="0.01">
+                </div>
+                <div>
+                  <label>ปีงบประมาณ</label>
+                  <input id="approvalFiscalYear" name="fiscalYear" inputmode="numeric">
+                </div>
+              </div>
+            </div>
+            <div class="full">
+              <label>หมายเหตุ</label>
+              <textarea name="note"></textarea>
+            </div>
+
+            <div id="considerDecisionBox" class="considerDecisionBox">
+              <div class="considerDecisionTitle">ผลการพิจารณารายการ</div>
+              <div class="considerDecisionHint">แสดงเฉพาะเมื่อรายการอยู่ที่ Phase 1 / 2.เสนอคณะทำงานกลั่นกรองพิจารณา แล้วเท่านั้น</div>
+              <div class="considerDecisionActions">
+            <button id="approveDecisionButton" class="approveDecision" type="button">อนุมัติ ส่งต่อ Phase 2</button>
+                <button id="rejectDecisionButton" class="rejectDecision" type="button">ไม่อนุมัติรายการ</button>
+              </div>
+            </div>
+          </div>
+
+          <button id="transferSubmitButton" class="primary" type="submit">บันทึก</button>
+          <button id="nextTransferButton" class="nextTransfer" type="button">ส่งต่อไปยังงานถัดไป</button>
+          <button id="acceptHandoffButton" class="acceptHandoff" type="button" style="display:none">รับเรื่อง</button>
+          <button id="completeProjectButton" class="completeTransfer" type="button">เสร็จสิ้น</button>
+          <button id="cancelProjectButton" class="cancelTransfer" type="button">ยกเลิกรายการ</button>
+        </form>
+        <div id="transferMessage" class="message"></div>
+      </section>
+    </main>
+
+    <script>
+      const WEB_APP_URL = '<?= webAppUrl ?>';
+      const INITIAL_AUTH_TOKEN = '<?= initialAuthToken ?>';
+      let authToken = INITIAL_AUTH_TOKEN || localStorage.getItem('adminAuthToken') || '';
+      if (INITIAL_AUTH_TOKEN) {
+        localStorage.setItem('adminAuthToken', INITIAL_AUTH_TOKEN);
+      }
+
+      const createTab = document.getElementById('createTab');
+      const transferTab = document.getElementById('transferTab');
+      const createPanel = document.getElementById('createPanel');
+      const transferPanel = document.getElementById('transferPanel');
+      const projectForm = document.getElementById('projectForm');
+      const transferForm = document.getElementById('transferForm');
+      const createReceivedDate = document.getElementById('createReceivedDate');
+      const transferPhase = document.getElementById('transferPhase');
+      const transferWiStep = document.getElementById('transferWiStep');
+      const transferResponsibleUnit = document.getElementById('transferResponsibleUnit');
+      const transferPhaseEntryDate = document.getElementById('transferPhaseEntryDate');
+      const handoffInbox = document.getElementById('handoffInbox');
+      const projectCode = document.getElementById('projectCode');
+      const projectSummary = document.getElementById('projectSummary');
+      const projectTimeline = document.getElementById('projectTimeline');
+      const createSubmitButton = document.getElementById('createSubmitButton');
+      const transferSubmitButton = document.getElementById('transferSubmitButton');
+      const createMessage = document.getElementById('createMessage');
+      const transferMessage = document.getElementById('transferMessage');
+      const logoutButton = document.getElementById('logoutButton');
+      const adminTitle = document.getElementById('adminTitle');
+      const nextTransferButton = document.getElementById('nextTransferButton');
+      const acceptHandoffButton = document.getElementById('acceptHandoffButton');
+      const completeProjectButton = document.getElementById('completeProjectButton');
+      const cancelProjectButton = document.getElementById('cancelProjectButton');
+      const considerDecisionBox = document.getElementById('considerDecisionBox');
+      const approveDecisionButton = document.getElementById('approveDecisionButton');
+      const rejectDecisionButton = document.getElementById('rejectDecisionButton');
+      const budgetApprovalBox = document.getElementById('budgetApprovalBox');
+      const approvalBudgetSource = document.getElementById('approvalBudgetSource');
+      const approvalBudgetAmount = document.getElementById('approvalBudgetAmount');
+      const approvalFiscalYear = document.getElementById('approvalFiscalYear');
+
+      let options = {
+        canCreateProject: false,
+        canCompleteProject: false,
+        createPhases: [],
+        transferPhases: [],
+        transferUnits: [],
+        nextPhaseByCurrentPhase: {},
+        wiByPhase: {},
+        responsibleUnitByPhase: {},
+      };
+      let projects = [];
+      let isSaving = false;
+      const IS_BUILDING_ADMIN_PAGE = true;
+      const PHASE_ORDER = ['Phase 1', 'Phase 2', 'Phase 3', 'Phase 4', 'Phase 5', 'Phase 6', 'Phase 7'];
+
+      function buildUrl(page) {
+        const url = new URL(WEB_APP_URL);
+        url.searchParams.set('page', page);
+        return url.toString();
+      }
+
+      function isPhase1ScreeningStep(project) {
+        return project && String(project.phase || '').trim() === 'Phase 1' &&
+          ['2.เสนอคณะทำงานกลั่นกรองพิจารณา', '2.รอกรรมการกลั่นกรองพิจารณา']
+            .indexOf(String(project.wiStep || '').trim()) !== -1;
+      }
+
+      function isPhase1ConsiderationStep(project) {
+        return project && String(project.phase || '').trim() === 'Phase 1' &&
+          ['3.แจ้งมติที่ประชุม', '3.พิจารณารายการ']
+            .indexOf(String(project.wiStep || '').trim()) !== -1;
+      }
+
+      function isPhase4BudgetApprovalStep(phase, wiStep) {
+        return String(phase || '').trim() === 'Phase 4' &&
+          String(wiStep || '').trim() === '3.แจ้งผลการอนุมัติ(ใบขวาง) (User)';
+      }
+
+      function isPendingHandoff(project) {
+        if (IS_BUILDING_ADMIN_PAGE) return false;
+        return Boolean(project && String(project.wiStep || '').trim() === 'รอรับเรื่อง');
+      }
+
+      function isMoveToConsideration(selected, targetPhase, targetWi) {
+        return isPhase1ScreeningStep(selected) &&
+          String(targetPhase || '').trim() === 'Phase 1' &&
+          String(targetWi || '').trim() === '3.แจ้งมติที่ประชุม';
+      }
+
+      function refreshConsiderDecisionUi() {
+        const selected = getSelectedProject();
+        if (isPendingHandoff(selected)) {
+          considerDecisionBox.classList.remove('isVisible');
+          transferSubmitButton.style.display = 'none';
+          nextTransferButton.style.display = 'none';
+          completeProjectButton.style.display = 'none';
+          return;
+        }
+        const visible = isPhase1ScreeningStep(selected);
+        considerDecisionBox.classList.toggle('isVisible', visible);
+        transferSubmitButton.style.display = '';
+        if (visible) {
+          nextTransferButton.style.display = 'none';
+          completeProjectButton.style.display = 'none';
+        }
+      }
+
+      function refreshBudgetApprovalUi() {
+        const selected = getSelectedProject();
+        const visible = Boolean(selected && isPhase4BudgetApprovalStep(selected.phase, selected.wiStep));
+
+        budgetApprovalBox.classList.toggle('isVisible', visible);
+        [approvalBudgetSource, approvalBudgetAmount, approvalFiscalYear].forEach(function(input) {
+          input.required = visible;
+        });
+
+        if (visible && selected) {
+          if (!approvalBudgetSource.value) approvalBudgetSource.value = selected.budgetSource || '';
+          if (!approvalBudgetAmount.value && selected.budgetAmount !== '') approvalBudgetAmount.value = selected.budgetAmount || '';
+          if (!approvalFiscalYear.value) approvalFiscalYear.value = selected.fiscalYear || '';
+        }
+      }
+
+      function buildBudgetApprovalPayload() {
+        if (!budgetApprovalBox.classList.contains('isVisible')) return {};
+        return {
+          budgetSource: approvalBudgetSource.value.trim(),
+          budgetAmount: approvalBudgetAmount.value,
+          fiscalYear: approvalFiscalYear.value.trim(),
+        };
+      }
+
+      function validateBudgetApprovalFieldsIfNeeded(targetPhase, targetWi) {
+        const selected = getSelectedProject();
+        const required = Boolean(selected && isPhase4BudgetApprovalStep(selected.phase, selected.wiStep));
+        if (!required) return true;
+
+        if (!approvalBudgetSource.value.trim()) {
+          setMessage(transferMessage, 'กรุณากรอกแหล่งเงิน', 'error');
+          approvalBudgetSource.focus();
+          return false;
+        }
+        if (!approvalBudgetAmount.value) {
+          setMessage(transferMessage, 'กรุณากรอกวงเงิน', 'error');
+          approvalBudgetAmount.focus();
+          return false;
+        }
+        if (!approvalFiscalYear.value.trim()) {
+          setMessage(transferMessage, 'กรุณากรอกปีงบประมาณ', 'error');
+          approvalFiscalYear.focus();
+          return false;
+        }
+        return true;
+      }
+
+      function saveMoveToConsideration(selected) {
+        if (!window.confirm('ยืนยันส่งต่อเข้าสู่ขั้นตอนพิจารณารายการ\n\n' +
+          selected.projectCode + ' - ' + selected.projectName + '\n' +
+          'จาก: Phase 1 / 2.เสนอคณะทำงานกลั่นกรองพิจารณา\n' +
+          'เป็น: Phase 1 / 3.แจ้งมติที่ประชุม')) return;
+
+        isSaving = true;
+        transferSubmitButton.disabled = true;
+        setMessage(transferMessage, 'กำลังส่งต่อเข้าสู่ขั้นตอนพิจารณารายการ...', '');
+
+        google.script.run
+          .withSuccessHandler(function(result) {
+            setMessage(transferMessage, 'ส่งต่อเข้าสู่ขั้นตอนพิจารณารายการสำเร็จ: ' + result.projectCode, 'success');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+            refreshTransferAfterAction(result.projectCode);
+          })
+          .withFailureHandler(function(error) {
+            setMessage(transferMessage, 'เกิดข้อผิดพลาด: ' + error.message, 'error');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+          })
+          .moveProjectToConsiderationSafe({
+            authToken: authToken,
+            projectCode: selected.projectCode,
+            note: transferForm.elements.note.value || 'ส่งต่อเข้าสู่ขั้นตอนพิจารณารายการ',
+          });
+      }
+
+
+      function normalizePhase1ConsiderationWi(wi) {
+        const text = String(wi || '').trim();
+        if (text === '3.พิจารณารายการ') return '3.แจ้งมติที่ประชุม';
+        return wi;
+      }
+
+      function cleanWiOptionList(phaseName, list) {
+        const seen = {};
+        let cleaned = (list || [])
+          .map(function(wi) {
+            return String(phaseName || '').trim() === 'Phase 1'
+              ? normalizePhase1ConsiderationWi(wi)
+              : wi;
+          })
+          .filter(function(wi) {
+            const text = String(wi || '').trim();
+            if (!text) return false;
+            if (text === '3.พิจารณารายการ') return false;
+            if (text === '') return false;
+            if (seen[text]) return false;
+            seen[text] = true;
+            return true;
+          });
+
+        if (String(phaseName || '').trim() === 'Phase 1') {
+          cleaned = ['1.สำรวจพื้นที่', '2.เสนอคณะทำงานกลั่นกรองพิจารณา', '3.แจ้งมติที่ประชุม'];
+        }
+
+        if (String(phaseName || '').trim() === 'Phase 4') {
+          cleaned = ['1.ตรวจสอบเอกสาร', '2.เสนอผู้บริหารพิจารณาแหล่งงบประมาณ', '3.แจ้งผลการอนุมัติ(ใบขวาง) (User)'];
+        }
+
+        return cleaned;
+      }
+
+      function normalizeWiOptions(rawOptions) {
+        const source = rawOptions || {};
+        const normalized = {};
+        Object.keys(source).forEach(function(phaseName) {
+          normalized[phaseName] = cleanWiOptionList(phaseName, source[phaseName]);
+        });
+
+        // บังคับทับเสมอ กันกรณี server ส่งค่าเดิมกลับมา
+        normalized['Phase 1'] = ['1.สำรวจพื้นที่', '2.เสนอคณะทำงานกลั่นกรองพิจารณา', '3.แจ้งมติที่ประชุม'];
+        normalized['Phase 4'] = ['1.ตรวจสอบเอกสาร', '2.เสนอผู้บริหารพิจารณาแหล่งงบประมาณ', '3.แจ้งผลการอนุมัติ(ใบขวาง) (User)'];
+
+        return normalized;
+      }
+
+      function normalizeLoadedProject(project) {
+        if (!project) return project;
+        if (String(project.phase || '').trim() === 'Phase 1') {
+          project.wiStep = normalizePhase1ConsiderationWi(project.wiStep);
+        }
+        return project;
+      }
+
+      function showPanel(name) {
+        const isCreate = name === 'create';
+        createTab.classList.toggle('active', isCreate);
+        transferTab.classList.toggle('active', !isCreate);
+        createPanel.classList.toggle('active', isCreate);
+        transferPanel.classList.toggle('active', !isCreate);
+        if (!isCreate) loadProjects();
+      }
+
+      function setMessage(element, text, type) {
+        element.textContent = text || '';
+        element.className = type ? 'message ' + type : 'message';
+      }
+
+      function todayText() {
+        const date = new Date();
+        return date.getFullYear() + '-' +
+          String(date.getMonth() + 1).padStart(2, '0') + '-' +
+          String(date.getDate()).padStart(2, '0');
+      }
+
+      function formatThaiShortDate(value) {
+        const text = String(value || '').trim();
+        if (!text || text === '-') return '-';
+        const shortMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+        let date = null;
+
+        const isoDate = text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+        if (isoDate) {
+          date = new Date(Number(isoDate[1]), Number(isoDate[2]) - 1, Number(isoDate[3]));
+        } else {
+          const slashDate = text.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+          if (slashDate) {
+            const yearRaw = Number(slashDate[3]);
+            date = new Date(yearRaw > 2400 ? yearRaw - 543 : yearRaw, Number(slashDate[2]) - 1, Number(slashDate[1]));
+          }
+        }
+
+        if (!date || Number.isNaN(date.getTime())) return text;
+        return date.getDate() + ' ' + shortMonths[date.getMonth()] + ' ' + (date.getFullYear() + 543);
+      }
+
+      function escapeHtml(value) {
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function phaseClass(phase, wiStep) {
+        const phaseText = String(phase || '');
+        const wiText = String(wiStep || '');
+        if (wiText.indexOf('รอรับเรื่อง') !== -1) return 'phasePending';
+        if (wiText.indexOf('ยกเลิก') !== -1) return 'phaseCancelled';
+        if (phaseText === 'เสร็จสิ้น' || wiText.indexOf('เสร็จสิ้น') !== -1) return 'phaseCompleted';
+        if (phaseText === 'Phase 1') return 'phase1';
+        if (phaseText === 'Phase 2') return 'phase2';
+        if (phaseText === 'Phase 3') return 'phase3';
+        if (phaseText === 'Phase 4') return 'phase4';
+        if (phaseText === 'Phase 5') return 'phase5';
+        if (phaseText === 'Phase 6') return 'phase6';
+        if (phaseText === 'Phase 7') return 'phase7';
+        return '';
+      }
+
+      function phaseBadge(phase, wiStep) {
+        return '<span class="phaseBadge ' + phaseClass(phase, wiStep) + '">' + escapeHtml(phase || '-') + '</span>';
+      }
+
+      function fillPhaseSelect(select, phases) {
+        select.innerHTML = '';
+        phases.forEach(function(phase) {
+          const option = document.createElement('option');
+          option.value = phase;
+          option.textContent = phase;
+          select.appendChild(option);
+        });
+      }
+
+      function fillWiSelect(phaseSelect, wiSelect, responsibleInput) {
+        const phase = phaseSelect.value;
+        const wiList = cleanWiOptionList(phase, options.wiByPhase[phase] || []);
+        wiSelect.innerHTML = '';
+        wiList.forEach(function(wi) {
+          const option = document.createElement('option');
+          option.value = wi;
+          option.textContent = wi;
+          wiSelect.appendChild(option);
+        });
+        responsibleInput.value = options.responsibleUnitByPhase[phase] || '';
+      }
+
+      function getSelectedProject() {
+        return projects.find(function(project) {
+          return project.projectCode === projectCode.value;
+        }) || null;
+      }
+
+      function fillTransferWiSelect() {
+        const selected = getSelectedProject();
+        const phase = transferPhase.value;
+        const wiList = cleanWiOptionList(phase, options.wiByPhase[phase] || []);
+        transferWiStep.innerHTML = '';
+
+        if (!wiList.length) {
+          transferResponsibleUnit.value = '';
+          renderTransferPreview();
+          return;
+        }
+
+        let suggestedWiStep = wiList[0];
+        if (selected && selected.phase === phase) {
+          const currentIndex = wiList.indexOf(selected.wiStep);
+          if (currentIndex >= 0 && currentIndex < wiList.length - 1) {
+            suggestedWiStep = wiList[currentIndex + 1];
+          } else if (currentIndex === wiList.length - 1) {
+            suggestedWiStep = selected.wiStep;
+          }
+        }
+
+        wiList.forEach(function(wi) {
+          const option = document.createElement('option');
+          option.value = wi;
+          option.textContent = wi;
+          transferWiStep.appendChild(option);
+        });
+        transferWiStep.value = suggestedWiStep;
+        transferResponsibleUnit.value = options.responsibleUnitByPhase[phase] || '';
+        renderTransferPreview();
+      }
+
+      function getTransferWiText() {
+        return transferWiStep.value || '';
+      }
+
+      function renderTransferPreview() {
+        return;
+      }
+
+      function applyRoleUi() {
+        createTab.style.display = options.canCreateProject ? '' : 'none';
+        if (!options.canCreateProject) {
+          showPanel('transfer');
+        }
+        transferSubmitButton.disabled = !options.transferPhases.length;
+      }
+
+      function loadOptions() {
+        google.script.run
+          .withSuccessHandler(function(result) {
+            options = result || options;
+            options.wiByPhase = normalizeWiOptions(options.wiByPhase || {});
+            fillPhaseSelect(transferPhase, options.transferPhases || []);
+            if (options.transferPhases.length) transferPhase.value = options.transferPhases[0];
+            fillWiSelect(transferPhase, transferWiStep, transferResponsibleUnit);
+            createReceivedDate.value = todayText();
+            transferPhaseEntryDate.value = todayText();
+            applyRoleUi();
+          })
+          .withFailureHandler(function(error) {
+            setMessage(createMessage, 'โหลดตัวเลือกไม่สำเร็จ: ' + error.message, 'error');
+          })
+          .getProjectCreateOptions(authToken);
+      }
+
+      function loadProjects(selectedProjectCode) {
+        projectCode.innerHTML = '<option value="">กำลังโหลดรายการ...</option>';
+        google.script.run
+          .withSuccessHandler(function(result) {
+            projects = (result || []).map(normalizeLoadedProject);
+            renderHandoffInbox();
+            if (!projects.length) {
+          projectCode.innerHTML = '<option value="">ไม่มีรายการให้เลือก</option>';
+          projectSummary.style.display = 'none';
+          hideProjectTimeline();
+          transferSubmitButton.style.display = '';
+          nextTransferButton.style.display = 'none';
+          acceptHandoffButton.style.display = 'none';
+          completeProjectButton.style.display = 'none';
+          cancelProjectButton.style.display = 'none';
+          return;
+            }
+
+            projectCode.innerHTML = '<option value="">เลือกรายการ</option>';
+            projects.forEach(function(project) {
+              const option = document.createElement('option');
+              option.value = project.projectCode;
+              option.textContent = project.projectCode + ' - ' + project.projectName;
+              projectCode.appendChild(option);
+            });
+            if (selectedProjectCode && projects.some(function(project) { return project.projectCode === selectedProjectCode; })) {
+              projectCode.value = selectedProjectCode;
+              renderProjectSummary();
+            }
+          })
+          .withFailureHandler(function(error) {
+            projectCode.innerHTML = '<option value="">โหลดรายการไม่สำเร็จ</option>';
+            setMessage(transferMessage, 'โหลดรายการไม่สำเร็จ: ' + error.message, 'error');
+          })
+          .getActiveProjectsForPhaseTransfer(authToken);
+      }
+
+      function renderHandoffInbox() {
+        const pendingItems = (projects || []).filter(isPendingHandoff);
+        if (!pendingItems.length) {
+          handoffInbox.classList.remove('isVisible');
+          handoffInbox.innerHTML = '';
+          return;
+        }
+
+        handoffInbox.classList.add('isVisible');
+        handoffInbox.innerHTML =
+          '<div class="handoffInboxHeader">' +
+            '<div class="handoffInboxTitle">📥 เรื่องรอรับ</div>' +
+            '<div class="handoffInboxCount">' + pendingItems.length + ' รายการ</div>' +
+          '</div>' +
+          '<div class="handoffInboxList">' +
+            pendingItems.map(function(project) {
+              return '<div class="handoffInboxItem">' +
+                '<div>' +
+                  '<div class="handoffInboxName">' + escapeHtml(project.projectCode + ' - ' + project.projectName) + '</div>' +
+                  '<div class="handoffInboxMeta">' + escapeHtml(project.phase || '-') + ' · ส่งเข้าหน่วยงาน: ' + escapeHtml(project.responsibleUnit || '-') + '</div>' +
+                '</div>' +
+                '<button class="acceptHandoff handoffInboxAccept" type="button" data-project-code="' + escapeHtml(project.projectCode) + '">รับเรื่อง</button>' +
+              '</div>';
+            }).join('') +
+          '</div>';
+      }
+
+      function acceptHandoffByProjectCode(projectCodeValue) {
+        if (isSaving) return;
+        if (projectCodeValue) {
+          projectCode.value = projectCodeValue;
+        }
+        const selected = getSelectedProject();
+        if (!isPendingHandoff(selected)) {
+          setMessage(transferMessage, 'รายการนี้ไม่ได้อยู่ในสถานะรอรับเรื่อง', 'error');
+          return;
+        }
+
+        const firstWi = (options.wiByPhase[selected.phase] || [])[0] || '';
+        if (!window.confirm('ยืนยันรับเรื่องเข้าหน่วยงาน\n\n' +
+          selected.projectCode + ' - ' + selected.projectName + '\n' +
+          'Phase: ' + selected.phase + '\n' +
+          'เริ่มที่ WI: ' + firstWi + '\n\n' +
+          'ระบบจะเริ่มนับเวลาใน Phase นี้ตั้งแต่วันนี้')) return;
+
+        isSaving = true;
+        transferSubmitButton.disabled = true;
+        nextTransferButton.disabled = true;
+        acceptHandoffButton.disabled = true;
+        completeProjectButton.disabled = true;
+        cancelProjectButton.disabled = true;
+        setMessage(transferMessage, 'กำลังรับเรื่อง...', '');
+
+        google.script.run
+          .withSuccessHandler(function(result) {
+            setMessage(transferMessage, 'รับเรื่องสำเร็จ: ' + result.projectCode, 'success');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+            nextTransferButton.disabled = false;
+            acceptHandoffButton.disabled = false;
+            completeProjectButton.disabled = false;
+            cancelProjectButton.disabled = false;
+            refreshTransferAfterAction(result.projectCode);
+          })
+          .withFailureHandler(function(error) {
+            setMessage(transferMessage, 'เกิดข้อผิดพลาด: ' + error.message, 'error');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+            nextTransferButton.disabled = false;
+            acceptHandoffButton.disabled = false;
+            completeProjectButton.disabled = false;
+            cancelProjectButton.disabled = false;
+          })
+          .acceptIncomingHandoff({
+            authToken: authToken,
+            projectCode: selected.projectCode,
+            note: transferForm.elements.note.value || 'รับเรื่อง',
+          });
+      }
+
+      function refreshTransferAfterAction(projectCodeValue) {
+        transferForm.elements.note.value = '';
+        approvalBudgetSource.value = '';
+        approvalBudgetAmount.value = '';
+        approvalFiscalYear.value = '';
+        loadProjects(projectCodeValue);
+      }
+
+      function renderProjectSummary() {
+        const selected = getSelectedProject();
+        if (!selected) {
+          projectSummary.style.display = 'none';
+          projectSummary.innerHTML = '';
+          hideProjectTimeline();
+          transferSubmitButton.style.display = '';
+          nextTransferButton.style.display = 'none';
+          acceptHandoffButton.style.display = 'none';
+          completeProjectButton.style.display = 'none';
+          cancelProjectButton.style.display = 'none';
+          return;
+        }
+
+        const pendingHandoff = isPendingHandoff(selected);
+        projectSummary.style.display = 'block';
+        projectSummary.innerHTML =
+          '<div class="projectSummaryCard">' +
+            '<div class="projectSummaryTitle">' +
+              '<div class="projectSummaryTitleItem">' +
+                '<div class="projectSummaryLabel">ชื่อรายการ</div>' +
+                '<div class="projectSummaryName">' + escapeHtml(selected.projectName) + '</div>' +
+              '</div>' +
+              '<div class="projectSummaryTitleItem">' +
+                '<div class="projectSummaryLabel">หน่วยงานเจ้าของเรื่อง / ต้นเรื่อง</div>' +
+                '<div class="projectSummaryName">' + escapeHtml(selected.ownerUnit || '-') + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="projectSummaryGrid">' +
+              '<div class="projectSummaryItem">' +
+                '<div class="projectSummaryLabel">วันที่สร้างรายการ</div>' +
+                '<div class="projectSummaryValue">' + escapeHtml(formatThaiShortDate(selected.receivedDate)) + '</div>' +
+              '</div>' +
+              '<div class="projectSummaryItem">' +
+                '<div class="projectSummaryLabel">ผู้รับผิดชอบ</div>' +
+                '<div class="projectSummaryValue">' + escapeHtml(selected.responsibleUnit || '-') + '</div>' +
+              '</div>' +
+              '<div class="projectSummaryItem">' +
+                '<div class="projectSummaryLabel">SOP ปัจจุบัน</div>' +
+                '<div class="projectSummaryValue">' + phaseBadge(selected.phase, selected.wiStep) + '</div>' +
+              '</div>' +
+              '<div class="projectSummaryItem">' +
+                '<div class="projectSummaryLabel">WI ปัจจุบัน</div>' +
+                '<div class="projectSummaryValue">' + escapeHtml(selected.wiStep || '-') + '</div>' +
+              '</div>' +
+            '</div>' +
+            (pendingHandoff
+              ? '<div class="handoffNotice">📥 มีเรื่องส่งเข้าหน่วยงานของคุณ กรุณากด “รับเรื่อง” เพื่อเริ่มนับเวลาใน Phase นี้</div>'
+              : '') +
+          '</div>';
+
+        const canComplete = canCompleteSelectedProject(selected);
+        const nextTarget = pendingHandoff ? null : getNextWorkTarget(selected);
+        const suggestedPhase = nextTarget && options.transferPhases.indexOf(nextTarget.phase) !== -1
+          ? nextTarget.phase
+          : selected.phase;
+        if (options.transferPhases.indexOf(suggestedPhase) !== -1) {
+          transferPhase.value = suggestedPhase;
+        }
+        fillTransferWiSelect();
+        if (nextTarget && transferPhase.value === nextTarget.phase) {
+          transferWiStep.value = nextTarget.wiStep;
+          transferResponsibleUnit.value = nextTarget.responsibleUnit || options.responsibleUnitByPhase[nextTarget.phase] || '';
+        }
+        nextTransferButton.style.display = nextTarget ? 'inline-block' : 'none';
+        nextTransferButton.textContent = nextTarget
+          ? 'ส่งต่อขั้นถัดไป'
+          : 'ไม่มีขั้นตอนถัดไป';
+        acceptHandoffButton.style.display = pendingHandoff ? 'inline-block' : 'none';
+        transferSubmitButton.style.display = pendingHandoff ? 'none' : '';
+        completeProjectButton.style.display = !pendingHandoff && canComplete ? 'inline-block' : 'none';
+        cancelProjectButton.style.display = !pendingHandoff && canCancelSelectedProject(selected) ? 'inline-block' : 'none';
+        refreshConsiderDecisionUi();
+        refreshBudgetApprovalUi();
+        loadProjectTimeline(selected.projectCode);
+      }
+
+      function hideProjectTimeline() {
+        projectTimeline.classList.remove('isVisible');
+        projectTimeline.innerHTML = '';
+      }
+
+      function loadProjectTimeline(projectCodeValue) {
+        projectTimeline.classList.add('isVisible');
+        projectTimeline.innerHTML =
+          '<div class="adminTimelineTitle">' +
+            '<strong>Timeline การดำเนินงาน</strong>' +
+            '<span>กำลังโหลด...</span>' +
+          '</div>';
+
+        google.script.run
+          .withSuccessHandler(function(rows) {
+            renderProjectTimeline(rows || []);
+          })
+          .withFailureHandler(function(error) {
+            projectTimeline.innerHTML =
+              '<div class="adminTimelineTitle">' +
+                '<strong>Timeline การดำเนินงาน</strong>' +
+                '<span class="error">โหลดไม่สำเร็จ: ' + escapeHtml(error.message) + '</span>' +
+              '</div>';
+          })
+          .getProjectTimelineForPhaseTransfer(projectCodeValue);
+      }
+
+      function renderProjectTimeline(rows) {
+        projectTimeline.classList.add('isVisible');
+        if (!rows.length) {
+          projectTimeline.innerHTML =
+            '<div class="adminTimelineTitle">' +
+              '<strong>Timeline การดำเนินงาน</strong>' +
+              '<span>0 รายการ</span>' +
+            '</div>' +
+            '<div class="adminTimelineEmpty">ยังไม่มีประวัติการบันทึกใน Admin_Input</div>';
+          return;
+        }
+
+        const orderedRows = rows.slice().reverse();
+        const nodesHtml = orderedRows.map(function(row) {
+          const nodeClass = phaseClass(row.phase, row.wiStep);
+          const recordedAt = escapeHtml(formatAdminTimelineRecordedAt(row.recordedAt || row.phaseEntryDate || '-'));
+          const rawNote = String(row.note || '').trim();
+          const noteHtml = shouldShowAdminTimelineNote(rawNote)
+            ? '<span class="adminTimelineLine adminTimelineNote adminTimelineCompactLine"><strong>หมายเหตุ</strong><span>' + escapeHtml(rawNote) + '</span></span>'
+            : '';
+          return '<div class="adminTimelineNode">' +
+            '<span class="adminTimelineDot ' + nodeClass + '"></span>' +
+            '<div class="adminTimelineCard ' + nodeClass + '">' +
+              '<span class="adminTimelineLine adminTimelinePhaseLine">' + phaseBadge(row.phase, row.wiStep) + '</span>' +
+              '<span class="adminTimelineLine adminTimelineCompactLine"><strong>WI</strong><span>' + escapeHtml(row.wiStep || '-') + '</span></span>' +
+              noteHtml +
+              '<span class="adminTimelineRecordedAt">' + recordedAt + '</span>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+
+        projectTimeline.innerHTML =
+          '<div class="adminTimelineTitle">' +
+            '<strong>Timeline การดำเนินงาน</strong>' +
+            '<span>' + rows.length + ' รายการล่าสุด</span>' +
+          '</div>' +
+          '<div class="adminTimelineTrack">' + nodesHtml + '</div>';
+      }
+
+      function formatAdminTimelineRecordedAt(value) {
+        const text = String(value || '').trim();
+        if (!text || text === '-') return '-';
+        const time = parseAdminTimelineDateTime(text);
+        if (!Number.isFinite(time)) {
+          return text.replace(/(\d{1,2}:\d{2}):\d{2}/, '$1');
+        }
+        const date = new Date(time);
+        const shortMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+        return date.getDate() + ' ' + shortMonths[date.getMonth()] + ' ' + (date.getFullYear() + 543) +
+          ' ' + String(date.getHours()).padStart(2, '0') + ':' + String(date.getMinutes()).padStart(2, '0') + ' น.';
+      }
+
+      function parseAdminTimelineDateTime(value) {
+        const text = String(value || '').trim();
+        const slashDate = text.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
+        if (slashDate) {
+          const yearRaw = Number(slashDate[3]);
+          const year = yearRaw > 2400 ? yearRaw - 543 : yearRaw;
+          return new Date(
+            year,
+            Number(slashDate[2]) - 1,
+            Number(slashDate[1]),
+            Number(slashDate[4] || 0),
+            Number(slashDate[5] || 0),
+            Number(slashDate[6] || 0)
+          ).getTime();
+        }
+        const isoDate = text.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
+        if (isoDate) {
+          return new Date(
+            Number(isoDate[1]),
+            Number(isoDate[2]) - 1,
+            Number(isoDate[3]),
+            Number(isoDate[4] || 0),
+            Number(isoDate[5] || 0),
+            Number(isoDate[6] || 0)
+          ).getTime();
+        }
+        const parsed = Date.parse(text);
+        return Number.isFinite(parsed) ? parsed : NaN;
+      }
+
+      function shouldShowAdminTimelineNote(note) {
+        const text = String(note || '').trim();
+        if (!text || text === '-') return false;
+        const hiddenNormalNotes = [
+          'ส่งต่อขั้นตอนถัดไป',
+          'ส่งต่อเข้าสู่ขั้นตอนพิจารณารายการ',
+        ];
+        return hiddenNormalNotes.indexOf(text) === -1;
+      }
+
+      function canCompleteSelectedProject(project) {
+        return Boolean(
+          options.canCompleteProject &&
+          project &&
+          String(project.phase || '').trim() === 'Phase 7' &&
+          ['1.บันทึกทะเบียนคุมสินทรัพย์', 'บันทึกทะเบียนคุมสินทรัพย์']
+            .indexOf(String(project.wiStep || '').trim()) !== -1
+        );
+      }
+
+      function canCancelSelectedProject(project) {
+        if (!project) return false;
+        const statusText = String(project.phaseSlaStatus || '');
+        const wiText = String(project.wiStep || '');
+        const closedText = statusText + ' ' + wiText;
+        if (closedText.indexOf('เสร็จสิ้น') !== -1) return false;
+        if (closedText.indexOf('ยกเลิก') !== -1) return false;
+        if (closedText.indexOf('ไม่อนุมัติ') !== -1) return false;
+        return (options.transferPhases || []).indexOf(project.phase) !== -1;
+      }
+
+      function getNextWorkTarget(project) {
+        if (!project) return null;
+        if (isPendingHandoff(project)) return null;
+        const phase = String(project.phase || '').trim();
+        const wiStep = String(project.wiStep || '').trim();
+        const wiList = options.wiByPhase[phase] || [];
+        const wiIndex = wiList.indexOf(wiStep);
+
+        if (wiIndex !== -1 && wiIndex < wiList.length - 1) {
+          return {
+            phase: phase,
+            wiStep: wiList[wiIndex + 1],
+            responsibleUnit: options.responsibleUnitByPhase[phase] || '-',
+          };
+        }
+
+        const phaseIndex = PHASE_ORDER.indexOf(phase);
+        if (phaseIndex === -1 || phaseIndex >= PHASE_ORDER.length - 1) return null;
+        const nextPhase = PHASE_ORDER[phaseIndex + 1];
+        const nextWiList = options.wiByPhase[nextPhase] || [];
+        return {
+          phase: nextPhase,
+          wiStep: nextWiList[0] || nextPhase,
+          responsibleUnit: options.responsibleUnitByPhase[nextPhase] || '-',
+        };
+      }
+
+      function confirmTransfer(actionText, targetPhase, targetWi, responsibleUnit) {
+        const selected = getSelectedProject();
+        return window.confirm(actionText + '\n\n' +
+          selected.projectCode + ' - ' + selected.projectName + '\n' +
+          'จาก: ' + selected.phase + ' / ' + selected.wiStep + '\n' +
+          'เป็น: ' + targetPhase + ' / ' + targetWi + '\n' +
+          'ฝ่ายรับผิดชอบ: ' + responsibleUnit + '\n\n' +
+          'ระบบจะบันทึก Log ลง Admin_Input และอัปเดต Master Tracking');
+      }
+
+      createTab.addEventListener('click', function() { showPanel('create'); });
+      transferTab.addEventListener('click', function() { showPanel('transfer'); });
+      transferPhase.addEventListener('change', function() { fillTransferWiSelect(); refreshConsiderDecisionUi(); refreshBudgetApprovalUi(); });
+      transferWiStep.addEventListener('change', function() { renderTransferPreview(); refreshConsiderDecisionUi(); refreshBudgetApprovalUi(); });
+      projectCode.addEventListener('change', renderProjectSummary);
+      handoffInbox.addEventListener('click', function(event) {
+        const button = event.target.closest('.handoffInboxAccept');
+        if (!button) return;
+        acceptHandoffByProjectCode(button.getAttribute('data-project-code'));
+      });
+
+      projectForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        if (isSaving) return;
+        isSaving = true;
+        createSubmitButton.disabled = true;
+        setMessage(createMessage, 'กำลังบันทึก...', '');
+
+        const payload = Object.fromEntries(new FormData(projectForm).entries());
+        payload.phase = 'Phase 1';
+        payload.wiStep = (options.wiByPhase['Phase 1'] || [])[0] || '';
+        payload.responsibleUnit = options.responsibleUnitByPhase['Phase 1'] || 'งานอาคารสถานที่';
+        payload.authToken = authToken;
+
+        google.script.run
+          .withSuccessHandler(function(result) {
+            setMessage(createMessage, 'บันทึกสำเร็จ รหัสรายการ: ' + result.projectCode, 'success');
+            projectForm.reset();
+            createReceivedDate.value = todayText();
+            createSubmitButton.disabled = false;
+            isSaving = false;
+            refreshTransferAfterAction(result.projectCode);
+          })
+          .withFailureHandler(function(error) {
+            setMessage(createMessage, 'เกิดข้อผิดพลาด: ' + error.message, 'error');
+            createSubmitButton.disabled = false;
+            isSaving = false;
+          })
+          .createNewProjectFromBuilding(payload);
+      });
+
+      transferForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        if (isSaving) return;
+
+        const selected = getSelectedProject();
+        const note = transferForm.elements.note.value || '';
+        if (!selected) {
+          setMessage(transferMessage, 'กรุณาเลือกรายการ', 'error');
+          return;
+        }
+        if (!validateBudgetApprovalFieldsIfNeeded(selected.phase, selected.wiStep)) return;
+        if (!note.trim() && !isPhase4BudgetApprovalStep(selected.phase, selected.wiStep)) {
+          setMessage(transferMessage, 'กรุณากรอกหมายเหตุก่อนบันทึก', 'error');
+          return;
+        }
+
+        if (!window.confirm('ยืนยันบันทึกหมายเหตุ\n\n' +
+          selected.projectCode + ' - ' + selected.projectName + '\n' +
+          'ระบบจะบันทึก Log โดยคง SOP / WI เดิม')) return;
+
+        isSaving = true;
+        transferSubmitButton.disabled = true;
+        nextTransferButton.disabled = true;
+        completeProjectButton.disabled = true;
+        cancelProjectButton.disabled = true;
+        setMessage(transferMessage, 'กำลังบันทึกหมายเหตุ...', '');
+
+        google.script.run
+          .withSuccessHandler(function(result) {
+            setMessage(transferMessage, 'บันทึกหมายเหตุสำเร็จ: ' + result.projectCode, 'success');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+            nextTransferButton.disabled = false;
+            completeProjectButton.disabled = false;
+            cancelProjectButton.disabled = false;
+            refreshTransferAfterAction(result.projectCode);
+          })
+          .withFailureHandler(function(error) {
+            setMessage(transferMessage, 'เกิดข้อผิดพลาด: ' + error.message, 'error');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+            nextTransferButton.disabled = false;
+            completeProjectButton.disabled = false;
+            cancelProjectButton.disabled = false;
+          })
+          .saveProjectNoteOnly({
+            authToken: authToken,
+            projectCode: selected.projectCode,
+            note: note || 'อัปเดตข้อมูลอนุมัติงบประมาณ',
+            ...buildBudgetApprovalPayload(),
+          });
+      });
+
+      nextTransferButton.addEventListener('click', function() {
+        if (isSaving) return;
+
+        const selected = getSelectedProject();
+        const nextTarget = getNextWorkTarget(selected);
+        if (!selected || !nextTarget) {
+          setMessage(transferMessage, 'รายการนี้ยังไม่พร้อมส่งต่อไปยังงานถัดไป', 'error');
+          return;
+        }
+        if (!validateBudgetApprovalFieldsIfNeeded(nextTarget.phase, nextTarget.wiStep)) return;
+        if (!window.confirm('ยืนยันส่งต่อขั้นตอนถัดไป\n\n' +
+          selected.projectCode + ' - ' + selected.projectName + '\n' +
+          'จาก: ' + selected.phase + ' / ' + selected.wiStep + '\n' +
+          'เป็น: ' + nextTarget.phase + ' / ' + nextTarget.wiStep + '\n' +
+          'ฝ่ายรับผิดชอบ: ' + nextTarget.responsibleUnit + '\n\n' +
+          'ระบบจะบันทึก Log ลง Admin_Input และอัปเดต Master Tracking')) return;
+
+        isSaving = true;
+        transferSubmitButton.disabled = true;
+        nextTransferButton.disabled = true;
+        completeProjectButton.disabled = true;
+        cancelProjectButton.disabled = true;
+        setMessage(transferMessage, 'กำลังส่งต่อขั้นตอนถัดไป...', '');
+
+        google.script.run
+          .withSuccessHandler(function(result) {
+            setMessage(transferMessage, 'ส่งต่อขั้นตอนถัดไปสำเร็จ: ' + result.projectCode, 'success');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+            nextTransferButton.disabled = false;
+            completeProjectButton.disabled = false;
+            cancelProjectButton.disabled = false;
+            refreshTransferAfterAction(result.projectCode);
+          })
+          .withFailureHandler(function(error) {
+            setMessage(transferMessage, 'เกิดข้อผิดพลาด: ' + error.message, 'error');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+            nextTransferButton.disabled = false;
+            completeProjectButton.disabled = false;
+            cancelProjectButton.disabled = false;
+          })
+          .transferProjectToNextStep({
+            authToken: authToken,
+            projectCode: selected.projectCode,
+            note: transferForm.elements.note.value,
+            ...buildBudgetApprovalPayload(),
+          });
+      });
+
+      acceptHandoffButton.addEventListener('click', function() {
+        const selected = getSelectedProject();
+        acceptHandoffByProjectCode(selected && selected.projectCode);
+      });
+
+      approveDecisionButton.addEventListener('click', function() {
+        if (isSaving) return;
+
+        const selected = getSelectedProject();
+
+        if (!isPhase1ScreeningStep(selected)) {
+          setMessage(transferMessage, 'รายการนี้ต้องอยู่ที่ Phase 1 / 2.เสนอคณะทำงานกลั่นกรองพิจารณา ก่อนอนุมัติ', 'error');
+          return;
+        }
+
+        if (!window.confirm('ยืนยันอนุมัติรายการและส่งต่อ Phase ถัดไป\n\n' +
+          selected.projectCode + ' - ' + selected.projectName + '\n' +
+          'จาก: Phase 1 / 2.เสนอคณะทำงานกลั่นกรองพิจารณา\n' +
+          'เป็น: Phase 2 / 1.เขียนแบบ')) return;
+
+        isSaving = true;
+        transferSubmitButton.disabled = true;
+        nextTransferButton.disabled = true;
+        completeProjectButton.disabled = true;
+        cancelProjectButton.disabled = true;
+        approveDecisionButton.disabled = true;
+        rejectDecisionButton.disabled = true;
+        setMessage(transferMessage, 'กำลังอนุมัติและส่งต่อ Phase 2...', '');
+
+        google.script.run
+          .withSuccessHandler(function(result) {
+            setMessage(transferMessage, 'อนุมัติและส่งต่อสำเร็จ: ' + result.projectCode, 'success');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+            nextTransferButton.disabled = false;
+            completeProjectButton.disabled = false;
+            cancelProjectButton.disabled = false;
+            approveDecisionButton.disabled = false;
+            rejectDecisionButton.disabled = false;
+            refreshTransferAfterAction(result.projectCode);
+          })
+          .withFailureHandler(function(error) {
+            setMessage(transferMessage, 'เกิดข้อผิดพลาด: ' + error.message, 'error');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+            nextTransferButton.disabled = false;
+            completeProjectButton.disabled = false;
+            cancelProjectButton.disabled = false;
+            approveDecisionButton.disabled = false;
+            rejectDecisionButton.disabled = false;
+          })
+          .approveProjectFromConsiderationSafe({
+            authToken: authToken,
+            projectCode: selected.projectCode,
+            note: transferForm.elements.note.value || 'อนุมัติรายการและส่งต่อ Phase 2',
+          });
+      });
+
+      rejectDecisionButton.addEventListener('click', function() {
+        if (isSaving) return;
+        const selected = getSelectedProject();
+
+        if (!isPhase1ScreeningStep(selected)) {
+          setMessage(transferMessage, 'รายการนี้ต้องอยู่ที่ Phase 1 / 2.เสนอคณะทำงานกลั่นกรองพิจารณา ก่อน', 'error');
+          return;
+        }
+
+        if (!window.confirm('ยืนยันไม่อนุมัติรายการนี้\n\n' +
+          selected.projectCode + ' - ' + selected.projectName)) return;
+
+        isSaving = true;
+        setMessage(transferMessage, 'กำลังบันทึกผลไม่อนุมัติ...', '');
+
+        google.script.run
+          .withSuccessHandler(function(result) {
+            setMessage(transferMessage, 'บันทึกไม่อนุมัติสำเร็จ: ' + result.projectCode + ' และยังคงนับรวมในรายการทั้งหมด', 'success');
+            isSaving = false;
+            refreshTransferAfterAction(result.projectCode);
+          })
+          .withFailureHandler(function(error) {
+            setMessage(transferMessage, 'เกิดข้อผิดพลาด: ' + error.message, 'error');
+            isSaving = false;
+          })
+          .rejectProjectFromConsiderationKeepVisibleSafe({
+            authToken: authToken,
+            projectCode: selected.projectCode,
+            note: transferForm.elements.note.value || 'ไม่อนุมัติรายการ',
+          });
+      });
+
+
+      cancelProjectButton.addEventListener('click', function() {
+        if (isSaving) return;
+
+        const selected = getSelectedProject();
+        if (!canCancelSelectedProject(selected)) {
+          setMessage(transferMessage, 'รายการนี้ไม่สามารถยกเลิกได้ หรือไม่ได้อยู่ในความรับผิดชอบของหน่วยงานคุณ', 'error');
+          return;
+        }
+        if (!window.confirm('ยืนยันยกเลิกรายการนี้\n\n' +
+          selected.projectCode + ' - ' + selected.projectName + '\n' +
+          'SOP ปัจจุบัน: ' + selected.phase + '\n\n' +
+          'ระบบจะเปลี่ยนสถานะเป็นยกเลิกรายการทันที และบันทึก Log ลง Admin_Input')) return;
+
+        isSaving = true;
+        transferSubmitButton.disabled = true;
+        nextTransferButton.disabled = true;
+        completeProjectButton.disabled = true;
+        cancelProjectButton.disabled = true;
+        setMessage(transferMessage, 'กำลังยกเลิกรายการ...', '');
+
+        google.script.run
+          .withSuccessHandler(function(result) {
+            setMessage(transferMessage, 'ยกเลิกรายการสำเร็จ: ' + result.projectCode, 'success');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+            nextTransferButton.disabled = false;
+            completeProjectButton.disabled = false;
+            cancelProjectButton.disabled = false;
+            cancelProjectButton.style.display = 'none';
+            refreshTransferAfterAction(result.projectCode);
+          })
+          .withFailureHandler(function(error) {
+            setMessage(transferMessage, 'เกิดข้อผิดพลาด: ' + error.message, 'error');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+            nextTransferButton.disabled = false;
+            completeProjectButton.disabled = false;
+            cancelProjectButton.disabled = false;
+          })
+          .cancelProject({
+            authToken: authToken,
+            projectCode: selected.projectCode,
+            note: transferForm.elements.note.value || 'ยกเลิกรายการ',
+          });
+      });
+
+      completeProjectButton.addEventListener('click', function() {
+        if (isSaving) return;
+
+        const selected = getSelectedProject();
+        if (!canCompleteSelectedProject(selected)) {
+          setMessage(transferMessage, 'รายการนี้ยังไม่สามารถบันทึกเป็นเสร็จสิ้นได้', 'error');
+          return;
+        }
+        if (!window.confirm('ยืนยันบันทึกรายการนี้เป็นเสร็จสิ้น\n\n' +
+          selected.projectCode + ' - ' + selected.projectName + '\n\n' +
+          'ระบบจะบันทึก Log ลง Admin_Input และอัปเดต Master Tracking')) return;
+
+        isSaving = true;
+        transferSubmitButton.disabled = true;
+        nextTransferButton.disabled = true;
+        completeProjectButton.disabled = true;
+        cancelProjectButton.disabled = true;
+        setMessage(transferMessage, 'กำลังบันทึกเสร็จสิ้น...', '');
+
+        google.script.run
+          .withSuccessHandler(function(result) {
+            setMessage(transferMessage, 'บันทึกเสร็จสิ้นสำเร็จ: ' + result.projectCode, 'success');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+            nextTransferButton.disabled = false;
+            completeProjectButton.disabled = false;
+            cancelProjectButton.disabled = false;
+            completeProjectButton.style.display = 'none';
+            refreshTransferAfterAction(result.projectCode);
+          })
+          .withFailureHandler(function(error) {
+            setMessage(transferMessage, 'เกิดข้อผิดพลาด: ' + error.message, 'error');
+            isSaving = false;
+            transferSubmitButton.disabled = false;
+            nextTransferButton.disabled = false;
+            completeProjectButton.disabled = false;
+            cancelProjectButton.disabled = false;
+          })
+          .completeProject({
+            authToken: authToken,
+            projectCode: selected.projectCode,
+            note: transferForm.elements.note.value || 'เสร็จสิ้น',
+          });
+      });
+
+      function redirectToLogin() {
+        localStorage.removeItem('adminAuthToken');
+        localStorage.removeItem('adminUser');
+        authToken = '';
+        window.top.location.replace(buildUrl('login'));
+      }
+
+      function validateSessionAndStart() {
+        if (!authToken) {
+          redirectToLogin();
+          return;
+        }
+
+        google.script.run
+          .withSuccessHandler(function(result) {
+            if (!result || !result.authenticated) {
+              redirectToLogin();
+              return;
+            }
+            adminTitle.textContent = 'แอดมิน : ' + String(result.user.unit || '').replace(/^แอดมิน\s*:?\s*/, '').trim();
+            loadOptions();
+          })
+          .withFailureHandler(redirectToLogin)
+          .validateAdminSession(authToken);
+      }
+
+      logoutButton.addEventListener('click', function() {
+        const tokenToLogout = authToken;
+        localStorage.removeItem('adminAuthToken');
+        localStorage.removeItem('adminUser');
+        authToken = '';
+        google.script.run
+          .withSuccessHandler(redirectToLogin)
+          .withFailureHandler(redirectToLogin)
+          .logoutAdmin(tokenToLogout);
+      });
+
+      validateSessionAndStart();
+    </script>
+  </body>
+</html>
